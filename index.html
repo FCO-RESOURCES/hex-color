@@ -3,104 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pro Color DB</title>
+    <title>Ultimate Color DB</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
     <style>
         * { box-sizing: border-box; }
         :root { --bg: #0f1115; --card: #1c1f26; --text: #f8f8f2; --primary: #6366f1; --primary-hover: #4f46e5; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .container { width: 100%; max-width: 480px; }
-        h1 { text-align: center; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 30px; }
+        h1 { text-align: center; font-weight: 600; margin-bottom: 25px; letter-spacing: -1px; }
 
         input, button, select { font-family: inherit; font-size: 16px; border-radius: 12px; border: 1px solid #333; outline: none; }
         input[type="password"], input[type="text"], input[type="number"] { background: #15171c; color: white; padding: 12px; }
         button { background: var(--primary); color: white; font-weight: 600; cursor: pointer; border: none; padding: 14px; transition: 0.2s; }
+        button:active { transform: scale(0.98); }
 
         #login-screen { display: flex; flex-direction: column; gap: 15px; margin-top: 50px; width: 100%; }
         #app-screen { display: none; flex-direction: column; gap: 20px; width: 100%; }
 
-        .card { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid #2a2e37; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 20px; }
-        
-        .color-tabs { display: flex; width: 100%; gap: 10px; }
-        .color-tab { flex: 1; background: #15171c; border: 2px solid #333; padding: 12px; border-radius: 12px; text-align: center; cursor: pointer; display: flex; flex-direction: column; gap: 8px;}
-        .color-tab.active { border-color: var(--primary); background: rgba(99, 102, 241, 0.08); }
-        .tab-label { font-size: 11px; font-weight: 600; color: #8b949e; text-transform: uppercase; }
-        .tab-swatch { width: 100%; height: 30px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); }
-        .tab-hex { font-family: monospace; font-size: 12px; color: white; }
+        .picker-card { background: var(--card); padding: 25px; border-radius: 20px; display: flex; flex-direction: column; gap: 20px; border: 1px solid #2a2e37; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-        .slider-group { width: 100%; display: flex; flex-direction: column; gap: 10px; background: #15171c; padding: 15px; border-radius: 10px; border: 1px solid #333; }
-        .unit-btn { background: #2a2e37; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer;}
+        /* TABS */
+        .color-tabs { display: flex; gap: 10px; width: 100%; }
+        .color-tab { flex: 1; background: #15171c; padding: 12px; border: 2px solid #333; border-radius: 15px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .color-tab.active { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
+        .tab-label { font-size: 10px; font-weight: 600; color: #8b949e; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .tab-swatch { width: 100%; height: 30px; border-radius: 6px; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1); }
+        .tab-hex { font-family: monospace; font-size: 12px; color: white; margin-top: 5px; display: block; }
+
+        /* DIMENSIONS */
+        .dim-box { background: #15171c; padding: 15px; border-radius: 15px; border: 1px solid #333; display: flex; flex-direction: column; gap: 10px; }
+        .dim-header { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: bold; color: #666; }
         .dim-row { display: flex; gap: 10px; }
-        .dim-field { flex: 1; display: flex; align-items: center; background: #0f1115; border: 1px solid #333; border-radius: 8px; padding-right: 12px; overflow: hidden;}
-        .dim-field input { background: transparent; border: none; padding: 12px; width: 100%; font-size: 14px; }
-        .dim-field span { color: #555; font-weight: bold; font-size: 12px;}
+        .dim-field { flex: 1; display: flex; align-items: center; background: #0f1115; border-radius: 10px; border: 1px solid #333; padding-right: 12px; }
+        .dim-field input { border: none; background: transparent; padding: 12px; width: 100%; font-size: 14px; }
+        .dim-field span { font-size: 11px; color: #444; font-weight: bold; }
 
-        .prop-row { display: flex; align-items: center; background: #15171c; padding: 10px; border-radius: 10px; border: 1px solid #333; gap: 10px; margin-bottom: 8px; }
-        .prop-row label { flex: 1; font-size: 14px; color: #aaa; font-weight: 600; }
-        .prop-input-text { flex: 1.5; background: transparent; border: none; border-bottom: 1px solid #444; color: white; padding: 4px; }
+        /* CUSTOM PROPS */
+        .prop-row { display: flex; align-items: center; background: #15171c; padding: 10px; border-radius: 12px; border: 1px solid #333; gap: 10px; margin-bottom: 8px; }
+        .prop-row label { flex: 1; font-size: 13px; font-weight: 600; color: #aaa; overflow: hidden; text-overflow: ellipsis; }
+        .prop-row input[type="text"] { flex: 1.5; background: transparent; border: none; border-bottom: 1px solid #444; color: white; padding: 4px; }
+        .prop-row input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--primary); }
 
         .freq-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-        .freq-chip { display: inline-flex; align-items: center; background: #15171c; border: 1px solid #444; border-radius: 20px; font-size: 12px; color: #ddd; overflow: hidden;}
-        .freq-chip-add { padding: 6px 10px; cursor: pointer; }
-        .freq-chip-del { padding: 6px 8px; border-left: 1px solid #444; cursor: pointer; color: #ef4444; font-weight: bold; }
+        .chip { background: #000; border: 1px solid #333; border-radius: 20px; font-size: 11px; display: inline-flex; align-items: center; overflow: hidden; }
+        .chip-add { padding: 6px 12px; cursor: pointer; }
+        .chip-del { padding: 6px 10px; border-left: 1px solid #333; color: #ef4444; cursor: pointer; font-weight: bold; }
 
-        .color-item { background: var(--card); border-radius: 12px; border: 1px solid #2a2e37; overflow: hidden; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
-        .full-bar { width: 100%; height: 55px; cursor: pointer; border-bottom: 1px solid #2a2e37; }
-        .item-footer { padding: 16px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-        .tag { background: #15171c; border: 1px solid #333; padding: 4px 8px; border-radius: 6px; font-size: 11px; color: #8b949e; margin: 2px; display: inline-block; }
-        .delete-btn { background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer;}
-        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #fff; color: #000; padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 14px; display: none; z-index: 100;}
+        /* SAVED ITEMS */
+        .item { background: var(--card); border-radius: 20px; border: 1px solid #2a2e37; overflow: hidden; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .bat-bar { width: 100%; height: 60px; cursor: pointer; border-bottom: 1px solid #222; }
+        .item-content { padding: 15px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+        .details h3 { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.2; word-wrap: break-word; }
+        .details p { margin: 4px 0; font-size: 11px; color: #888; font-family: monospace; }
+        .tag { background: #111; border: 1px solid #333; padding: 4px 8px; border-radius: 6px; font-size: 10px; color: #aaa; margin: 3px 3px 0 0; display: inline-block; }
+        .del-btn { background: rgba(239, 68, 68, 0.1); color: #ef4444; width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; flex-shrink: 0; }
+
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: white; color: black; padding: 12px 25px; border-radius: 30px; font-weight: bold; display: none; z-index: 10000; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>THE database 💔</h1>
+
         <div id="login-screen">
-            <input type="password" id="password" placeholder="Enter Password">
-            <button onclick="login()">Login</button>
+            <input type="password" id="passInput" placeholder="Password">
+            <button onclick="doLogin()">Login</button>
         </div>
 
         <div id="app-screen">
-            <div class="card">
+            <div class="picker-card">
                 <div class="color-tabs">
-                    <div class="color-tab active" id="tab-0" onclick="switchTab(0)">
-                        <span class="tab-label">Base Color</span>
-                        <div class="tab-swatch" id="swatch-0"></div>
-                        <div class="tab-hex" id="hex-0">#6366F1</div>
+                    <div class="color-tab active" id="t0" onclick="switchTab(0)">
+                        <span class="tab-label">Base</span>
+                        <div class="tab-swatch" id="s0"></div>
+                        <span class="tab-hex" id="h0">#6366F1</span>
                     </div>
-                    <div class="color-tab" id="tab-1" onclick="switchTab(1)">
-                        <span class="tab-label">Tip Color</span>
-                        <div class="tab-swatch" id="swatch-1"></div>
-                        <div class="tab-hex" id="hex-1">#EC4899</div>
+                    <div class="color-tab" id="t1" onclick="switchTab(1)">
+                        <span class="tab-label">Tip</span>
+                        <div class="tab-swatch" id="s1"></div>
+                        <span class="tab-hex" id="h1">#EC4899</span>
                     </div>
                 </div>
-                <div id="color-wheel" style="display:flex; justify-content:center;"></div>
-                <div class="slider-group">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-size:12px; color:#555; font-weight:bold;">DIMENSIONS (<span id="unitDisplay">cm</span>)</span>
-                        <button class="unit-btn" onclick="toggleUnit()">Swap Unit</button>
+
+                <div id="color-wheel" style="display: flex; justify-content: center;"></div>
+
+                <div class="dim-box">
+                    <div class="dim-header">
+                        <span>DIMENSIONS (<span id="uN">cm</span>)</span>
+                        <button onclick="toggleUnit()" style="padding: 5px 10px; background: #333; border: none; border-radius: 6px; color: white; font-size: 10px;">Swap Unit</button>
                     </div>
                     <div class="dim-row">
-                        <div class="dim-field"><input type="number" id="lengthInput" placeholder="Length (Ø)"><span class="unit-label">cm</span></div>
-                        <div class="dim-field"><input type="number" id="girthInput" placeholder="Girth (Ø)"><span class="unit-label">cm</span></div>
+                        <div class="dim-field"><input type="number" id="lI" placeholder="Length (Ø)" step="0.1"><span class="uT">cm</span></div>
+                        <div class="dim-field"><input type="number" id="gI" placeholder="Girth (Ø)" step="0.1"><span class="uT">cm</span></div>
                     </div>
                 </div>
-                <div id="active-props-list"></div>
-                <button onclick="togglePropMenu()" style="background:#15171c; border:1px dashed #444; color:#666; font-size:13px; padding:10px;">+ Add Custom Property</button>
-                <div id="prop-menu" style="display:none; background:#000; padding:15px; border-radius:15px; margin-top:10px;">
-                    <div class="freq-list" id="freq-list"></div>
-                    <div style="display:flex; gap:8px; margin-top:15px;">
-                        <input type="text" id="newPropName" placeholder="Name" style="flex:1;">
-                        <select id="newPropType" style="background:#111; color:white;"><option value="text">Text</option><option value="check">Check</option></select>
-                        <button onclick="createNewProp()" style="padding:0 15px;">Add</button>
+
+                <div id="active-props"></div>
+                <button onclick="toggleMenu()" style="width: 100%; background: #15171c; border: 1px dashed #444; color: #555; font-size: 12px; padding: 12px;">+ Add Custom Property</button>
+                <div id="menu" style="display: none; background: #000; padding: 15px; border-radius: 15px;">
+                    <div id="freq-list"></div>
+                    <div style="display: flex; gap: 8px; margin-top: 15px;">
+                        <input type="text" id="newN" placeholder="Name" style="flex: 2; font-size: 13px;">
+                        <select id="newT" style="flex: 1; background: #111; color: white; font-size: 12px;"><option value="text">Text</option><option value="check">Check</option></select>
+                        <button onclick="addCloudProp()" style="padding: 0 15px; font-size: 12px;">Add</button>
                     </div>
                 </div>
-                <input type="text" id="colorName" placeholder="Give this entry a name...">
-                <button onclick="saveColor()" style="width:100%;">Save Entry</button>
+
+                <input type="text" id="entryName" placeholder="Entry Name..." style="background: #15171c; border: 1px solid #333;">
+                <button onclick="saveEntry()">Save Entry</button>
             </div>
-            <button onclick="logout()" style="background:transparent; border:1px solid #333; color:#444; width:100%; margin-top:10px;">Logout</button>
-            <div id="colorList" style="margin-top:20px;"></div>
+            
+            <button onclick="logout()" style="background: transparent; color: #444; border: 1px solid #333; margin: 15px 0;">Logout</button>
+            <div id="list"></div>
         </div>
     </div>
     <div id="toast">Copied!</div>
@@ -110,117 +125,91 @@
         const WORKER_URL = "https://color-backend.luku-di456.workers.dev";
         // ==============================
 
-        let colorPicker, activeTab = 0, useInches = false, activeColors = ["#6366f1", "#ec4899"], currentProps = [], freqProps = [];
+        let picker, tab = 0, colors = ["#6366f1", "#ec4899"], myProps = [], cloudProps = [], inches = false;
 
         window.onload = () => {
-            colorPicker = new iro.ColorPicker("#color-wheel", { width: 250, color: activeColors[0], layout: [{ component: iro.ui.Wheel }, { component: iro.ui.Slider, options: { sliderType: 'value' } }] });
-            colorPicker.on('color:change', c => {
-                activeColors[activeTab] = c.hexString;
-                document.getElementById('swatch-'+activeTab).style.backgroundColor = c.hexString;
-                document.getElementById('hex-'+activeTab).innerText = c.hexString.toUpperCase();
+            picker = new iro.ColorPicker("#color-wheel", { width: 250, color: colors[0], layout: [{ component: iro.ui.Wheel }, { component: iro.ui.Slider, options: { sliderType: 'value' } }] });
+            picker.on('color:change', c => {
+                colors[tab] = c.hexString;
+                document.getElementById('s'+tab).style.backgroundColor = c.hexString;
+                document.getElementById('h'+tab).innerText = c.hexString.toUpperCase();
             });
             if(localStorage.getItem('db_password')) loadData();
         };
 
-        function switchTab(i) {
-            activeTab = i;
-            document.getElementById('tab-0').className = i===0?'color-tab active':'color-tab';
-            document.getElementById('tab-1').className = i===1?'color-tab active':'color-tab';
-            colorPicker.color.hexString = activeColors[i];
-        }
+        function getHeaders() { return { 'Authorization': 'Bearer ' + localStorage.getItem('db_password'), 'Content-Type': 'application/json' }; }
 
-        function toggleUnit() {
-            useInches = !useInches;
-            const u = useInches ? 'in' : 'cm';
-            document.getElementById('unitDisplay').innerText = u;
-            document.querySelectorAll('.unit-label').forEach(s => s.innerText = u);
-        }
-
-        async function api(path, method="GET", body=null) {
-            const h = { 'Authorization': 'Bearer ' + localStorage.getItem('db_password'), 'Content-Type': 'application/json' };
-            const res = await fetch(WORKER_URL + path, { method, headers: h, body: body ? JSON.stringify(body) : null });
-            if (res.status === 401) { logout(); throw "Auth Error"; }
-            return res.json();
-        }
-
-        async function login() {
-            const p = document.getElementById('password').value.toLowerCase();
-            const res = await fetch(WORKER_URL + '/api/login', { method: 'POST', body: JSON.stringify({password: p}) });
-            if (res.ok) { localStorage.setItem('db_password', p); loadData(); } else { alert("Wrong Password"); }
+        async function doLogin() {
+            const p = document.getElementById('passInput').value.toLowerCase();
+            try {
+                const res = await fetch(WORKER_URL + '/api/login', { method: 'POST', body: JSON.stringify({password: p}) });
+                if (res.ok) { localStorage.setItem('db_password', p); loadData(); } else { alert("Wrong Password"); }
+            } catch(e) { alert("Connect Error: " + e.message); }
         }
 
         async function loadData() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app-screen').style.display = 'flex';
             try {
-                const [p, c] = await Promise.all([api('/api/props'), api('/api/colors')]);
-                freqProps = p; renderFreq(); renderColors(c);
+                const h = getHeaders();
+                const [pRes, cRes] = await Promise.all([fetch(WORKER_URL+'/api/props', {headers:h}), fetch(WORKER_URL+'/api/colors', {headers:h})]);
+                if (pRes.status === 401) return logout();
+                cloudProps = await pRes.json();
+                renderFreq(); renderEntries(await cRes.json());
             } catch(e) { console.error(e); }
         }
 
-        async function createNewProp() {
-            const n = document.getElementById('newPropName').value.trim();
-            const t = document.getElementById('newPropType').value;
-            if(!n) return;
-            addPropToForm(n, t);
-            if(!freqProps.find(p => p.name.toLowerCase() === n.toLowerCase())) {
-                freqProps.push({name:n, type:t}); renderFreq();
-                await api('/api/props', 'POST', {name:n, type:t});
-            }
-            document.getElementById('newPropName').value = '';
+        async function saveEntry() {
+            const body = { name: document.getElementById('entryName').value||'Unnamed', hex1: colors[0], hex2: colors[1], length: document.getElementById('lI').value, girth: document.getElementById('gI').value, unit: inches?'in':'cm', customFields: myProps };
+            const res = await fetch(WORKER_URL+'/api/colors', { method:'POST', headers:getHeaders(), body:JSON.stringify(body) });
+            if (res.ok) { location.reload(); } else { alert("Save Failed"); }
         }
 
+        async function addCloudProp() {
+            const name = document.getElementById('newN').value.trim();
+            if(!name) return;
+            await fetch(WORKER_URL+'/api/props', { method:'POST', headers:getHeaders(), body:JSON.stringify({name, type: document.getElementById('newT').value}) });
+            document.getElementById('newN').value = '';
+            loadData();
+        }
+
+        async function delCloudProp(name) { await fetch(WORKER_URL+'/api/props', { method:'DELETE', headers:getHeaders(), body:JSON.stringify({name}) }); loadData(); }
+        function addPropToForm(n, t) { if(!myProps.find(p=>p.name===n)) { myProps.push({name:n, type:t, value: t==='check'?false:''}); renderActive(); document.getElementById('menu').style.display='none'; } }
+        
         function renderFreq() {
             const l = document.getElementById('freq-list'); l.innerHTML = '';
-            freqProps.forEach(p => {
-                l.innerHTML += `<div class="freq-chip"><span class="freq-chip-add" onclick="addPropToForm('${p.name}','${p.type}')">+ ${p.name}</span><span class="freq-chip-del" onclick="deleteFreqProp('${p.name}')">✕</span></div>`;
-            });
-        }
-
-        async function deleteFreqProp(n) {
-            freqProps = freqProps.filter(p => p.name !== n); renderFreq();
-            await api('/api/props', 'DELETE', {name:n});
-        }
-
-        function addPropToForm(name, type) {
-            if(currentProps.find(p => p.name === name)) return;
-            currentProps.push({name, type, value: type==='check'?false:''});
-            renderActive(); document.getElementById('prop-menu').style.display='none';
+            cloudProps.forEach(p => { l.innerHTML += `<div class="chip"><span class="chip-add" onclick="addPropToForm('${p.name}','${p.type}')">+ ${p.name}</span><span class="chip-del" onclick="delCloudProp('${p.name}')">✕</span></div>`; });
         }
 
         function renderActive() {
-            const c = document.getElementById('active-props-list'); c.innerHTML = '';
-            currentProps.forEach((p, i) => {
-                const input = p.type==='check' ? `<input type="checkbox" onchange="currentProps[${i}].value=this.checked">` : `<input type="text" class="prop-input-text" oninput="currentProps[${i}].value=this.value">`;
-                c.innerHTML += `<div class="prop-row"><label>${p.name}</label>${input}<span onclick="currentProps.splice(${i},1);renderActive();" style="color:#ef4444; cursor:pointer; font-weight:bold;">✕</span></div>`;
+            const c = document.getElementById('active-props'); c.innerHTML = '';
+            myProps.forEach((p, i) => {
+                let input = p.type==='check' ? `<input type="checkbox" onchange="myProps[${i}].value=this.checked">` : `<input type="text" oninput="myProps[${i}].value=this.value">`;
+                c.innerHTML += `<div class="prop-row"><label>${p.name}</label>${input}<span onclick="myProps.splice(${i},1);renderActive();" style="color:#ef4444; font-weight:bold; cursor:pointer; padding: 5px;">✕</span></div>`;
             });
         }
 
-        async function saveColor() {
-            const body = { name: document.getElementById('colorName').value || 'Unnamed', hex1: activeColors[0], hex2: activeColors[1], length: document.getElementById('lengthInput').value, girth: document.getElementById('girthInput').value, unit: useInches?'in':'cm', customFields: currentProps };
-            await api('/api/colors', 'POST', body);
-            location.reload();
-        }
-
-        async function deleteColor(id) { if(confirm('Delete?')) { await api('/api/colors', 'DELETE', {id}); loadData(); } }
+        function switchTab(i) { tab = i; document.getElementById('t0').className = i===0?'color-tab active':'color-tab'; document.getElementById('t1').className = i===1?'color-tab active':'color-tab'; picker.color.hexString = colors[i]; }
+        function toggleUnit() { inches = !inches; const u = inches?'in':'cm'; document.getElementById('uN').innerText = u; document.querySelectorAll('.uT').forEach(e=>e.innerText=u); }
+        function toggleMenu() { const m = document.getElementById('menu'); m.style.display = m.style.display==='none'?'block':'none'; }
+        async function delEntry(id) { if(confirm("Delete entry?")) { await fetch(WORKER_URL+'/api/colors', {method:'DELETE', headers:getHeaders(), body:JSON.stringify({id})}); loadData(); } }
         function logout() { localStorage.removeItem('db_password'); location.reload(); }
-        function togglePropMenu() { let m = document.getElementById('prop-menu'); m.style.display = m.style.display==='none'?'block':'none'; }
 
-        function renderColors(colors) {
-            const list = document.getElementById('colorList'); list.innerHTML = '';
-            colors.forEach(c => {
-                const h1 = c.hex1 || '#000', h2 = c.hex2 || '#fff', u = c.unit || 'cm';
-                const tags = (c.customFields || []).map(f => `<span class="tag">${f.name}: ${f.value}</span>`).join('');
-                list.innerHTML += `<div class="color-item">
-                    <div class="full-bar" style="background:linear-gradient(to right, ${h1} 50%, ${h2} 50%)" onclick="navigator.clipboard.writeText('Base: ${h1} | Tip: ${h2}'); document.getElementById('toast').style.display='block'; setTimeout(()=>document.getElementById('toast').style.display='none',2000);"></div>
-                    <div class="item-footer">
+        function renderEntries(data) {
+            const list = document.getElementById('list'); list.innerHTML = '';
+            data.forEach(c => {
+                const tags = (c.customFields||[]).map(f => `<span class="tag">${f.name}: ${f.value}</span>`).join('');
+                const h1 = c.hex1 || '#000', h2 = c.hex2 || '#fff';
+                list.innerHTML += `<div class="item">
+                    <div class="bat-bar" style="background: linear-gradient(to right, ${h1} 50%, ${h2} 50%)" onclick="navigator.clipboard.writeText('Base: ${h1} | Tip: ${h2}'); document.getElementById('toast').style.display='block'; setTimeout(()=>document.getElementById('toast').style.display='none',2000);"></div>
+                    <div class="item-content">
                         <div style="flex:1">
                             <h3 style="margin:0">${c.name}</h3>
-                            <p style="font-size:11px; color:#8b949e;">Base: <span style="color:${h1}">${h1}</span> &nbsp;&bull;&nbsp; Tip: <span style="color:${h2}">${h2}</span></p>
-                            <p style="font-size:11px; color:#8b949e;">L: ${c.length||'Ø'} ${u} &nbsp;&bull;&nbsp; G: ${c.girth||'Ø'} ${u}</p>
+                            <p>B: <span style="color:${h1}">${h1}</span> &bull; T: <span style="color:${h2}">${h2}</span></p>
+                            <p>L: ${c.length||'Ø'} ${c.unit} &bull; G: ${c.girth||'Ø'} ${c.unit}</p>
                             <div>${tags}</div>
                         </div>
-                        <div class="delete-btn" onclick="deleteColor('${c.id}')">✕</div>
+                        <div class="del-btn" onclick="delEntry('${c.id}')">✕</div>
                     </div>
                 </div>`;
             });
