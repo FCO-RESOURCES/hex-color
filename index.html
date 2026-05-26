@@ -3,197 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THE database 💔</title>
+    <title>THE Database 💔</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         :root { --bg: #0f1115; --card: #1c1f26; --text: #f8f8f2; --primary: #6366f1; --primary-hover: #4f46e5; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
-        .container { width: 100%; max-width: 480px; }
-        input, button, select { font-family: inherit; }
+        .container { width: 100%; max-width: 460px; }
+        h1 { text-align: center; font-weight: 600; margin: 20px 0; letter-spacing: -1px; }
+
+        /* Inputs & Buttons */
+        input, button, select { font-family: inherit; font-size: 16px; border-radius: 12px; border: 1px solid #333; outline: none; }
+        input[type="password"], input[type="text"], input[type="number"] { background: #15171c; color: white; padding: 12px; width: 100%; }
+        button { background: var(--primary); color: white; font-weight: 600; cursor: pointer; border: none; padding: 14px; transition: 0.2s; }
+        button:hover { background: var(--primary-hover); }
+
         #login-screen { display: flex; flex-direction: column; gap: 15px; margin-top: 50px; width: 100%; }
         #app-screen { display: none; flex-direction: column; gap: 20px; width: 100%; }
-        .picker-card { background: var(--card); padding: 20px; border-radius: 16px; display: flex; flex-direction: column; gap: 15px; border: 1px solid #2a2e37; }
-        .color-tabs { display: flex; gap: 8px; width: 100%; }
-        .color-tab { flex: 1; background: #15171c; padding: 10px; border: 2px solid #333; border-radius: 12px; text-align: center; cursor: pointer; }
-        .color-tab.active { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
-        .tab-swatch { width: 100%; height: 20px; border-radius: 4px; margin: 5px 0; }
-        .dim-box { background: #15171c; padding: 15px; border-radius: 10px; border: 1px solid #333; }
-        .dim-row { display: flex; gap: 10px; margin-top: 10px; }
-        .dim-field { flex: 1; display: flex; align-items: center; background: #0f1115; border-radius: 8px; border: 1px solid #333; padding-right: 8px; }
-        .dim-field input { background: transparent; border: none; color: white; padding: 10px; width: 100%; outline: none; }
-        .color-item { background: var(--card); border-radius: 12px; border: 1px solid #2a2e37; overflow: hidden; margin-bottom: 15px; }
-        .full-bar { width: 100%; height: 50px; border-bottom: 1px solid #2a2e37; }
-        .item-footer { padding: 15px; display: flex; justify-content: space-between; align-items: flex-start; }
-        .tag { background: #15171c; border: 1px solid #333; padding: 3px 7px; border-radius: 5px; font-size: 11px; color: #8b949e; margin: 2px; display: inline-block; }
+
+        /* Picker Card */
+        .card { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid #2a2e37; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 20px; }
+        
+        .tabs { display: flex; gap: 10px; width: 100%; }
+        .tab { flex: 1; background: #111; padding: 12px; border-radius: 15px; border: 2px solid #333; cursor: pointer; text-align: center; transition: 0.2s; }
+        .tab.active { border-color: var(--primary); background: rgba(99,102,241,0.15); }
+        .tab span { font-size: 10px; font-weight: 600; color: #888; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .tab-swatch { width: 100%; height: 25px; border-radius: 6px; margin-bottom: 5px; }
+        .tab-hex { font-family: monospace; font-size: 12px; color: white; text-transform: uppercase; }
+
+        /* Dimensions Box */
+        .dim-box { background: #111; padding: 15px; border-radius: 15px; border: 1px solid #333; display: flex; flex-direction: column; gap: 12px; }
+        .dim-header { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: bold; color: #666; }
+        .dim-inputs { display: flex; gap: 10px; }
+        .dim-field { flex: 1; position: relative; }
+        .dim-field input { padding-right: 35px; font-size: 14px; }
+        .dim-field b { position: absolute; right: 12px; top: 12px; font-size: 11px; color: #444; }
+
+        /* Custom Props */
+        .prop-row { display: flex; align-items: center; background: #111; padding: 10px; border-radius: 12px; border: 1px solid #333; gap: 10px; margin-bottom: 8px; }
+        .prop-row label { flex: 1; font-size: 13px; font-weight: 600; color: #aaa; }
+        .prop-row input[type="text"] { flex: 1.5; background: transparent; border: none; border-bottom: 1px solid #333; border-radius: 0; padding: 4px; }
+        .prop-row input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--primary); }
+        .prop-row input[type="range"] { flex: 1.5; accent-color: var(--primary); }
+        
+        .freq-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .chip { background: #000; border: 1px solid #333; border-radius: 20px; font-size: 11px; display: flex; align-items: center; overflow: hidden; }
+        .chip-add { padding: 6px 12px; cursor: pointer; }
+        .chip-del { padding: 6px 10px; border-left: 1px solid #333; color: #ef4444; cursor: pointer; font-weight: bold; }
+
+        /* Saved Items */
+        .item { background: var(--card); border-radius: 18px; border: 1px solid #2a2e37; overflow: hidden; margin-bottom: 15px; }
+        .bat-bar { width: 100%; height: 55px; cursor: pointer; border-bottom: 1px solid #222; }
+        .item-info { padding: 15px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .item-info h3 { margin: 0; font-size: 16px; }
+        .item-info p { margin: 4px 0; font-size: 11px; color: #888; font-family: monospace; }
+        .tag { background: #111; border: 1px solid #333; padding: 4px 8px; border-radius: 6px; font-size: 10px; color: #aaa; margin: 3px 3px 0 0; display: inline-block; }
+        .del-btn { background: rgba(239, 68, 68, 0.1); color: #ef4444; width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: white; color: black; padding: 12px 25px; border-radius: 30px; font-weight: bold; display: none; z-index: 1000; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>THE database 💔</h1>
+
         <div id="login-screen">
-            <input type="password" id="password" placeholder="Enter Password" style="padding:14px; border-radius:10px; background:#15171c; color:white; border:1px solid #333;">
-            <button onclick="login()" style="padding:14px; border-radius:10px; background:var(--primary); color:white; border:none; font-weight:bold;">Login</button>
+            <input type="password" id="passInput" placeholder="Password">
+            <button onclick="doLogin()">Login</button>
         </div>
 
         <div id="app-screen">
-            <div class="picker-card">
-                <div class="color-tabs">
-                    <div class="color-tab active" id="tab-0" onclick="switchTab(0)">
-                        <div style="font-size:10px; color:#888;">BASE</div>
-                        <div class="tab-swatch" id="swatch-0"></div>
-                        <input type="text" id="hex-0" style="width:100%; background:transparent; border:none; color:white; text-align:center; font-size:12px;" maxlength="7">
+            <div class="card">
+                <div class="tabs">
+                    <div class="tab active" id="t0" onclick="setTab(0)">
+                        <span>Base Color</span>
+                        <div class="tab-swatch" id="s0"></div>
+                        <div class="tab-hex" id="h0">#6366F1</div>
                     </div>
-                    <div class="color-tab" id="tab-1" onclick="switchTab(1)">
-                        <div style="font-size:10px; color:#888;">TIP</div>
-                        <div class="tab-swatch" id="swatch-1"></div>
-                        <input type="text" id="hex-1" style="width:100%; background:transparent; border:none; color:white; text-align:center; font-size:12px;" maxlength="7">
+                    <div class="tab" id="t1" onclick="setTab(1)">
+                        <span>Tip Color</span>
+                        <div class="tab-swatch" id="s1"></div>
+                        <div class="tab-hex" id="h1">#EC4899</div>
                     </div>
                 </div>
-                <div id="color-wheel" style="display:flex; justify-content:center;"></div>
+
+                <div id="wheel" style="display: flex; justify-content: center;"></div>
+
                 <div class="dim-box">
-                    <div style="display:flex; justify-content:space-between; font-size:12px;">
-                        <span>DIMENSIONS (<span id="unitText">cm</span>)</span>
-                        <button onclick="toggleUnit()" style="background:#333; color:white; border:none; padding:4px 8px; border-radius:5px; font-size:10px;">Swap Unit</button>
+                    <div class="dim-header">
+                        <span>DIMENSIONS (<span id="uName">cm</span>)</span>
+                        <button onclick="swapUnit()" style="padding: 5px 10px; font-size: 10px; background: #222;">Swap Unit</button>
                     </div>
-                    <div class="dim-row">
-                        <div class="dim-field"><input type="number" id="lIn" placeholder="Length (Ø)"><span style="font-size:10px; color:#555;">cm</span></div>
-                        <div class="dim-field"><input type="number" id="gIn" placeholder="Girth (Ø)"><span style="font-size:10px; color:#555;">cm</span></div>
-                    </div>
-                </div>
-                <div id="active-props"></div>
-                <button onclick="toggleProps()" style="background:#15171c; color:#888; border:1px dashed #444; padding:10px; font-size:12px;">+ Add Custom Property</button>
-                <div id="prop-menu" style="display:none; background:#222; padding:10px; border-radius:10px;">
-                    <div id="freq-list" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div>
-                    <div style="display:flex; gap:5px;">
-                        <input type="text" id="pName" placeholder="Name" style="flex:1; background:#111; color:white; border:1px solid #333; padding:5px; font-size:12px;">
-                        <select id="pType" style="background:#111; color:white; border:1px solid #333;"><option value="text">Text</option><option value="check">Check</option></select>
-                        <button onclick="addPropCloud()" style="padding:5px 10px; font-size:12px;">Add</button>
+                    <div class="dim-inputs">
+                        <div class="dim-field"><input type="number" id="len" placeholder="Length (Ø)"><b class="uTxt">cm</b></div>
+                        <div class="dim-field"><input type="number" id="grt" placeholder="Girth (Ø)"><b class="uTxt">cm</b></div>
                     </div>
                 </div>
-                <input type="text" id="cName" placeholder="Entry Name..." style="width:100%; padding:12px; background:#15171c; border:1px solid #333; color:white; border-radius:10px;">
-                <button onclick="save()" style="width:100%; padding:14px; background:var(--primary); color:white; border:none; font-weight:bold; border-radius:10px;">Save Entry</button>
+
+                <div class="props-area">
+                    <div id="active-props"></div>
+                    <button onclick="showMenu()" style="width: 100%; background: #111; border: 1px dashed #444; color: #666; font-size: 13px;">+ Add Custom Property</button>
+                    <div id="menu" style="display: none; background: #222; padding: 15px; border-radius: 15px; margin-top: 10px;">
+                        <div class="freq-list" id="freq-list"></div>
+                        <div style="display: flex; gap: 8px; margin-top: 15px;">
+                            <input type="text" id="pName" placeholder="Name" style="flex: 2;">
+                            <select id="pType" style="background:#111; color:white; padding: 5px; flex: 1;">
+                                <option value="text">Text</option>
+                                <option value="slider">Slider</option>
+                                <option value="check">Check</option>
+                            </select>
+                            <button onclick="addPropCloud()" style="padding: 0 15px;">Add</button>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="text" id="entryName" placeholder="Entry Name...">
+                <button onclick="save()">Save Entry</button>
             </div>
-            <button onclick="logout()" style="background:transparent; color:#555; border:1px solid #333; width:100%; padding:10px; border-radius:10px;">Logout</button>
+            
+            <button onclick="logout()" style="background: transparent; color: #555; border: 1px solid #333; margin: 20px 0;">Logout</button>
             <div id="list"></div>
         </div>
     </div>
 
+    <div id="toast">Copied!</div>
+
     <script>
         const WORKER_URL = "https://color-backend.luku-di456.workers.dev";
-        let picker, activeTab = 0, useInches = false, activeColors = ["#6366f1", "#ec4899"], currentProps = [], freqProps = [];
+        let picker, tab = 0, inches = false, colors = ["#6366f1", "#ec4899"], myProps = [], cloudProps = [];
 
         window.onload = () => {
             initPicker();
-            if(localStorage.getItem('db_password')) loadData();
+            if(localStorage.getItem('db_password')) load();
         };
 
         function initPicker() {
-            picker = new iro.ColorPicker("#color-wheel", { width: 250, color: activeColors[0] });
-            picker.on('color:change', c => { activeColors[activeTab] = c.hexString; updateSwatches(); });
-            [0, 1].forEach(i => document.getElementById('hex-'+i).addEventListener('input', e => {
-                if(e.target.value.length === 7) { activeColors[i] = e.target.value; if(activeTab === i) picker.color.hexString = e.target.value; updateSwatches(); }
-            }));
-            updateSwatches();
+            picker = new iro.ColorPicker("#wheel", { width: 250, color: colors[0] });
+            picker.on('color:change', c => {
+                colors[tab] = c.hexString;
+                document.getElementById('s'+tab).style.backgroundColor = c.hexString;
+                document.getElementById('h'+tab).innerText = c.hexString.toUpperCase();
+            });
         }
 
-        function updateSwatches() {
-            document.getElementById('swatch-0').style.backgroundColor = activeColors[0];
-            document.getElementById('swatch-1').style.backgroundColor = activeColors[1];
-            document.getElementById('hex-0').value = activeColors[0].toUpperCase();
-            document.getElementById('hex-1').value = activeColors[1].toUpperCase();
+        function setTab(i) {
+            tab = i;
+            document.getElementById('t0').className = i===0 ? 'tab active' : 'tab';
+            document.getElementById('t1').className = i===1 ? 'tab active' : 'tab';
+            picker.color.hexString = colors[i];
         }
 
-        function switchTab(i) { activeTab = i; document.getElementById('tab-0').className = i===0?'color-tab active':'color-tab'; document.getElementById('tab-1').className = i===1?'color-tab active':'color-tab'; picker.color.hexString = activeColors[i]; }
-        function toggleUnit() { useInches = !useInches; document.getElementById('unitText').innerText = useInches?'in':'cm'; document.querySelectorAll('.dim-field span').forEach(s => s.innerText = useInches?'in':'cm'); }
-        function toggleProps() { let m = document.getElementById('prop-menu'); m.style.display = m.style.display==='none'?'block':'none'; }
+        function swapUnit() {
+            inches = !inches;
+            document.getElementById('uName').innerText = inches ? 'in' : 'cm';
+            document.querySelectorAll('.uTxt').forEach(el => el.innerText = inches ? 'in' : 'cm');
+        }
 
-        function getHeaders() { return { 'Authorization': 'bearer ' + localStorage.getItem('db_password'), 'Content-Type': 'application/json' }; }
+        function showMenu() { let m = document.getElementById('menu'); m.style.display = m.style.display==='none'?'block':'none'; }
 
-        async function loadData() {
-            const h = getHeaders();
+        async function api(path, method="GET", body=null) {
+            const h = { 'Authorization': 'Bearer ' + localStorage.getItem('db_password'), 'Content-Type': 'application/json' };
+            const res = await fetch(WORKER_URL + path, { method, headers: h, body: body ? JSON.stringify(body) : null });
+            if (res.status === 401) { logout(); throw "Auth Error"; }
+            return res.json();
+        }
+
+        async function doLogin() {
+            const password = document.getElementById('passInput').value.toLowerCase();
+            const res = await fetch(WORKER_URL + '/api/login', { method: 'POST', body: JSON.stringify({password}) });
+            if (res.ok) { localStorage.setItem('db_password', password); load(); } else { alert("Wrong Password"); }
+        }
+
+        async function load() {
             try {
-                const [pRes, cRes] = await Promise.all([fetch(WORKER_URL+'/api/props', {headers:h}), fetch(WORKER_URL+'/api/colors', {headers:h})]);
-                if(pRes.status === 401) return logout();
-                freqProps = await pRes.json();
-                renderFreq();
-                renderColors(await cRes.json());
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('app-screen').style.display = 'flex';
-            } catch(e) { console.error(e); }
+                const [p, c] = await Promise.all([api('/api/props'), api('/api/colors')]);
+                cloudProps = p; renderFreq(); renderColors(c);
+            } catch(e) {}
         }
 
         async function addPropCloud() {
-            const name = document.getElementById('pName').value;
+            const name = document.getElementById('pName').value.trim();
             const type = document.getElementById('pType').value;
             if(!name) return;
-            await fetch(WORKER_URL+'/api/props', { method:'POST', headers:getHeaders(), body:JSON.stringify({name, type}) });
+            await api('/api/props', 'POST', {name, type});
             document.getElementById('pName').value = '';
-            loadData();
+            load();
         }
 
         async function delPropCloud(name) {
-            await fetch(WORKER_URL+'/api/props', { method:'DELETE', headers:getHeaders(), body:JSON.stringify({name}) });
-            loadData();
+            await api('/api/props', 'DELETE', {name});
+            load();
+        }
+
+        function addPropToForm(name, type) {
+            if(myProps.find(p => p.name === name)) return;
+            myProps.push({name, type, value: type==='check'?false:(type==='slider'?5:'')});
+            showMenu(); renderActive();
         }
 
         function renderFreq() {
             const l = document.getElementById('freq-list'); l.innerHTML = '';
-            freqProps.forEach(p => {
-                l.innerHTML += `<div style="background:#111; border:1px solid #333; padding:5px 10px; border-radius:20px; font-size:10px; display:flex; gap:5px;">
-                    <span onclick="addPropToForm('${p.name}','${p.type}')" style="cursor:pointer;">+ ${p.name}</span>
-                    <span onclick="delPropCloud('${p.name}')" style="color:#ef4444; cursor:pointer;">✕</span>
-                </div>`;
+            cloudProps.forEach(p => {
+                l.innerHTML += `<div class="chip"><span class="chip-add" onclick="addPropToForm('${p.name}','${p.type}')">+ ${p.name}</span><span class="chip-del" onclick="delPropCloud('${p.name}')">✕</span></div>`;
             });
-        }
-
-        function addPropToForm(name, type) {
-            if(currentProps.find(p => p.name === name)) return;
-            currentProps.push({name, type, value: type==='check'?false:''});
-            renderActive();
-            toggleProps();
         }
 
         function renderActive() {
             const c = document.getElementById('active-props'); c.innerHTML = '';
-            currentProps.forEach((p, i) => {
-                const input = p.type==='check'? `<input type="checkbox" onchange="currentProps[${i}].value=this.checked">` : `<input type="text" style="flex:1; background:transparent; border:none; border-bottom:1px solid #444; color:white;" oninput="currentProps[${i}].value=this.value">`;
-                c.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:#15171c; padding:10px; border-radius:10px; border:1px solid #333; margin-bottom:5px;">
-                    <span style="font-size:12px; color:#aaa;">${p.name}</span>${input}
-                    <span onclick="currentProps.splice(${i},1);renderActive();" style="color:#ef4444; cursor:pointer;">✕</span>
-                </div>`;
+            myProps.forEach((p, i) => {
+                let input = `<input type="text" oninput="myProps[${i}].value=this.value" value="${p.value}">`;
+                if(p.type === 'check') input = `<input type="checkbox" onchange="myProps[${i}].value=this.checked" ${p.value?'checked':''}>`;
+                if(p.type === 'slider') input = `<input type="range" min="1" max="10" oninput="myProps[${i}].value=this.value" value="${p.value}">`;
+                c.innerHTML += `<div class="prop-row"><label>${p.name}</label>${input}<span onclick="myProps.splice(${i},1);renderActive();" style="color:#ef4444; font-weight:bold; cursor:pointer;">✕</span></div>`;
             });
         }
 
-        async function login() {
-            const password = document.getElementById('password').value.toLowerCase();
-            const res = await fetch(WORKER_URL+'/api/login', { method:'POST', body: JSON.stringify({password}) });
-            if(res.ok) { localStorage.setItem('db_password', password); loadData(); } else { alert('Wrong password'); }
-        }
-
         async function save() {
-            const body = { name: document.getElementById('cName').value || 'Unnamed', hex1: activeColors[0], hex2: activeColors[1], length: document.getElementById('lIn').value, girth: document.getElementById('gIn').value, unit: useInches?'in':'cm', customFields: currentProps };
-            const res = await fetch(WORKER_URL+'/api/colors', { method:'POST', headers:getHeaders(), body: JSON.stringify(body) });
-            if(res.ok) { location.reload(); } else { const err = await res.json(); alert(err.error); }
+            const body = { name: document.getElementById('entryName').value || 'Unnamed', hex1: colors[0], hex2: colors[1], length: document.getElementById('len').value, girth: document.getElementById('grt').value, unit: inches?'in':'cm', customFields: myProps };
+            await api('/api/colors', 'POST', body);
+            location.reload();
         }
 
-        async function delColor(id) { if(confirm('Delete?')) { await fetch(WORKER_URL+'/api/colors', { method:'DELETE', headers:getHeaders(), body:JSON.stringify({id}) }); loadData(); } }
+        async function delEntry(id) { if(confirm("Delete?")) { await api('/api/colors', 'DELETE', {id}); load(); } }
         function logout() { localStorage.removeItem('db_password'); location.reload(); }
+        function copy(h1, h2) { navigator.clipboard.writeText(`Base: ${h1} | Tip: ${h2}`); const t = document.getElementById('toast'); t.style.display='block'; setTimeout(()=>t.style.display='none', 2000); }
 
-        function renderColors(colors) {
-            const l = document.getElementById('list'); l.innerHTML = '';
-            colors.forEach(c => {
+        function renderColors(data) {
+            const list = document.getElementById('list'); list.innerHTML = '';
+            data.forEach(c => {
                 const tags = (c.customFields||[]).map(f => `<span class="tag">${f.name}: ${f.value}</span>`).join('');
-                l.innerHTML += `<div class="color-item">
-                    <div class="full-bar" style="background:linear-gradient(to right, ${c.hex1} 50%, ${c.hex2} 50%)"></div>
-                    <div class="item-footer">
-                        <div style="flex:1;">
-                            <h3 style="margin:0; font-size:14px;">${c.name}</h3>
-                            <p style="font-size:10px; color:#666; margin:5px 0;">L: ${c.length||'Ø'} ${c.unit} | G: ${c.girth||'Ø'} ${c.unit}</p>
+                list.innerHTML += `<div class="item">
+                    <div class="bat-bar" style="background: linear-gradient(to right, ${c.hex1} 50%, ${c.hex2} 50%)" onclick="copy('${c.hex1}','${c.hex2}')"></div>
+                    <div class="item-info">
+                        <div style="flex:1">
+                            <h3 style="margin:0">${c.name}</h3>
+                            <p>Base: <span style="color:${c.hex1}">${c.hex1}</span> &bull; Tip: <span style="color:${c.hex2}">${c.hex2}</span></p>
+                            <p>L: ${c.length||'Ø'} ${c.unit} &bull; G: ${c.girth||'Ø'} ${c.unit}</p>
                             <div>${tags}</div>
                         </div>
-                        <button onclick="delColor('${c.id}')" style="background:rgba(239,68,68,0.1); color:#ef4444; border:none; padding:8px; border-radius:8px;">✕</button>
+                        <div class="del-btn" onclick="delEntry('${c.id}')">✕</div>
                     </div>
                 </div>`;
             });
